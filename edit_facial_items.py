@@ -21,8 +21,23 @@ def eyebrows_detection(image):
     return left_eyebrow_point, right_eyebrow_point
 
 
+def find_forehead(image):
+    forehead = []
+    mp_face_mesh = mp.solutions.face_mesh
+    face_mesh_images = mp_face_mesh.FaceMesh(static_image_mode=True, max_num_faces=2,
+                                             min_detection_confidence=0.5)
+    face_mesh_results = face_mesh_images.process(image[:, :, ::-1])
+    if face_mesh_results.multi_face_landmarks:
+        for face_no, face_landmarks in enumerate(face_mesh_results.multi_face_landmarks):
+            return face_landmarks.landmark[10].x * image.shape[1], face_landmarks.landmark[10].y * image.shape[0]
+
+
 def convert_landmark_to_point(landmarks, shape):
     xy_points = []
     for landmark in landmarks:
         xy_points.append((landmark.x * shape[1], landmark.y * shape[0]))
     return np.array(xy_points)
+
+
+def remove_eyebrow(image, hull, forehead_point):
+    pass
