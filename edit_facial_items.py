@@ -1,6 +1,23 @@
 import mediapipe as mp
 import numpy as np
 import itertools
+from scipy.spatial import Delaunay
+
+
+def in_hull(p, hull):
+    """
+    Test if points in `p` are in `hull`
+
+    `p` should be a `NxK` coordinates of `N` points in `K` dimensions
+    `hull` is either a scipy.spatial.Delaunay object or the `MxK` array of the
+    coordinates of `M` points in `K`dimensions for which Delaunay triangulation
+    will be computed
+    """
+
+    if not isinstance(hull, Delaunay):
+        hull = Delaunay(hull)
+
+    return hull.find_simplex(p) >= 0
 
 
 def eyebrows_detection(image):
@@ -39,5 +56,19 @@ def convert_landmark_to_point(landmarks, shape):
     return np.array(xy_points)
 
 
-def remove_eyebrow(image, hull, forehead_point):
-    pass
+def remove_eyebrow(image, hull):
+    pixels_index = np.zeros((image.shape[0] * image.shape[1], 2))
+    x, y = find_forehead(image)
+    color = image[int(y), int(x)]
+    for loop1 in range(image.shape[0]):
+        for loop2 in range(image.shape[1]):
+            pixels_index[loop1 * image.shape[1] + loop2, 0] = loop1
+            pixels_index[loop1 * image.shape[1] + loop2, 1] = loop2
+    # if pixel in hull, return True
+    points = in_hull(pixels_index, hull)
+    for loop1 in range(image.shape[0]):
+        for loop2 in range(image.shape[1]):
+            if points[loop1 * image.shape[1] + loop2]:
+                image[loop2, loop1] = color
+    return image
+
