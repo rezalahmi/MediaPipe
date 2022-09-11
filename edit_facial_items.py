@@ -2,6 +2,7 @@ import mediapipe as mp
 import numpy as np
 import itertools
 from scipy.spatial import Delaunay
+import cv2
 
 
 def in_hull(p, hull):
@@ -72,3 +73,21 @@ def remove_eyebrow(image, hull):
                 image[loop2, loop1] = color
     return image
 
+
+def blur_eyebrow(image, hull):
+    pixels_index = np.zeros((image.shape[0] * image.shape[1], 2))
+    color = (255, 255, 255)
+    mask = np.zeros(image.shape, dtype=np.uint8)
+    for loop1 in range(image.shape[0]):
+        for loop2 in range(image.shape[1]):
+            pixels_index[loop1 * image.shape[1] + loop2, 0] = loop1
+            pixels_index[loop1 * image.shape[1] + loop2, 1] = loop2
+    # if pixel in hull, return True
+    points = in_hull(pixels_index, hull)
+    for loop1 in range(image.shape[0]):
+        for loop2 in range(image.shape[1]):
+            if points[loop1 * image.shape[1] + loop2]:
+                mask[loop2, loop1] = color
+    blurred_img = cv2.GaussianBlur(image, (205, 205), 0)
+    result = np.where(mask == np.array([255, 255, 255]), blurred_img, image)
+    return result

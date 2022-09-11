@@ -11,15 +11,16 @@ import edit_facial_items
 
 # Press the green button in the gutter to run the script.
 if __name__ == '__main__':
-    image = cv2.imread('images/raheleh.JPG')
+    image = cv2.imread('images/reza.JPG')
     l, r = edit_facial_items.eyebrows_detection(image)
     hull = edit_facial_items.convert_landmark_to_point(l, image.shape)
-    result = edit_facial_items.remove_eyebrow(image, hull)
-    plt.title("Result")
-    plt.axis('off')
-    plt.imshow(result)
+    # result = edit_facial_items.remove_eyebrow(image, hull)
+    result = edit_facial_items.blur_eyebrow(image, hull)
+    result = cv2.resize(result, (500, 400))
+    cv2.imshow('result', result)
 
-    plt.show()
-    # cv2.imwrite(os.path.join('result', 'annotation.jpg'), annotated_image)
+    cv2.waitKey(0)  # waits until a key is pressed
+    cv2.destroyAllWindows()  # destroys the window showing image
+
 
 # See PyCharm help at https://www.jetbrains.com/help/pycharm/
