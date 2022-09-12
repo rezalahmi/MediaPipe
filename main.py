@@ -17,10 +17,10 @@ if __name__ == '__main__':
     #hull = edit_facial_items.convert_landmark_to_point(l, image.shape)
     # result = edit_facial_items.remove_eyebrow(image, hull)
     #result = edit_facial_items.blur_eyebrow(image, hull)
-    #result = find_landmark_of_nose.landmark_nose(image)
+    result = find_landmark_of_nose.landmark_nose(image)
     #result = cv2.resize(result, (500, 400))
     #cv2.imshow('result', result)
-
+    print(result)
     cv2.waitKey(0)  # waits until a key is pressed
     cv2.destroyAllWindows()  # destroys the window showing image
 

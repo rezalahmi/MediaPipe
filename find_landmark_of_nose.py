@@ -19,6 +19,7 @@ def landmark_nose(image):
     if results.multi_face_landmarks:
         for face_np, face_landmarks in enumerate(results.multi_face_landmarks):
             for idx in nose:
-                nose_landmarks.append((int(face_landmarks.landmark[idx].x * image.shape[1]),
-                                       int(face_landmarks.landmark[idx].y * image.shape[0])))
+                nose_landmarks.append([int(face_landmarks.landmark[idx].x * image.shape[1]),
+                                       int(face_landmarks.landmark[idx].y * image.shape[0]),
+                                       int(face_landmarks.landmark[idx].z)])
     return nose_landmarks
